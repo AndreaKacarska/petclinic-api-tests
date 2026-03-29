@@ -25,7 +25,8 @@ public class PetAPITests {
     @Order(1)
     @DisplayName("TC001 - Add a new pet successfully - expected status 201")
     public void testAddPetSuccessfully() {
-        String petJson = "{\"name\": \"Buddy\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Buddy\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, " +
+                "\"name\": \"dog\"}, \"ownerId\": 1}";
 
         createdPetId = given()
                 .contentType(ContentType.JSON)
@@ -47,7 +48,8 @@ public class PetAPITests {
     @DisplayName("TC002 - Add a pet with today's birth date - expected status 201")
     public void testAddPetWithBirthDateToday() {
         String today = java.time.LocalDate.now().toString();
-        String petJson = "{\"name\": \"Rex\", \"birthDate\": \"" + today + "\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Rex\", \"birthDate\": \"" + today + "\", \"type\": {\"id\": 1, " +
+                "\"name\": \"cat\"}, \"ownerId\": 1}";
 
         given()
                 .contentType(ContentType.JSON)
@@ -64,7 +66,8 @@ public class PetAPITests {
     @DisplayName("TC005 - Add a pet with special characters in the name - expected status 201")
     // Linked to BUG004 - needs clarification from team
     public void testAddPetWithSpecialCharacters() {
-        String petJson = "{\"name\": \"#!@123\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"#!@123\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, " +
+                "\"name\": \"cat\"}, \"ownerId\": 1}";
 
         given()
                 .contentType(ContentType.JSON)
@@ -80,7 +83,8 @@ public class PetAPITests {
     @DisplayName("TC008 - Add two pets with the same name to the same owner - expected status 201")
     // Linked to BUG005 - needs clarification from team
     public void testAddDuplicatePetNameForSameOwner() {
-        String petJson = "{\"name\": \"Bella\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Bella\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, " +
+                "\"name\": \"cat\"}, \"ownerId\": 1}";
 
         given().contentType(ContentType.JSON).body(petJson).post("/api/owners/1/pets");
 
@@ -114,7 +118,8 @@ public class PetAPITests {
     @DisplayName("TC013 - Update an existing pet's details - expected status 204")
     public void testUpdatePet() {
         // 204 means success with no content returned
-        String updatedPetJson = "{\"name\": \"BuddyUpdated\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}}";
+        String updatedPetJson = "{\"name\": \"BuddyUpdated\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, " +
+                "\"name\": \"dog\"}}";
 
         given()
                 .contentType(ContentType.JSON)
@@ -130,7 +135,8 @@ public class PetAPITests {
     @DisplayName("TC014 - Delete a pet - expected status 204 and pet should no longer exist")
     public void testDeletePet() {
         // Step 1: Create a pet specifically to delete so we don't affect other tests
-        String petJson = "{\"name\": \"PetToDelete\", \"birthDate\": \"2021-06-10\", \"type\": {\"id\": 3, \"name\": \"lizard\"}}";
+        String petJson = "{\"name\": \"PetToDelete\", \"birthDate\": \"2021-06-10\", \"type\": " +
+                "{\"id\": 3, \"name\": \"lizard\"}}";
 
         int petToDeleteId = given()
                 .contentType(ContentType.JSON)
@@ -162,7 +168,8 @@ public class PetAPITests {
     @Order(8)
     @DisplayName("TC003 - Add a pet with a future birth date - expected status 400")
     public void testAddPetWithFutureDate_ShouldReturn400() {
-        String petJson = "{\"name\": \"Futuristico\", \"birthDate\": \"2029-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 2}";
+        String petJson = "{\"name\": \"Futuristico\", \"birthDate\": \"2029-01-15\", \"type\": {\"id\": 1, " +
+                "\"name\": \"cat\"}, \"ownerId\": 2}";
 
         given()
                 .contentType(ContentType.JSON)
@@ -178,7 +185,8 @@ public class PetAPITests {
     @DisplayName("TC004 - Add a pet without a name - expected status 400")
     // BUG001: System currently returns 500 instead of expected 400
     public void testAddPetWithoutName_ShouldReturn400() {
-        String petJson = "{\"name\": \"\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 2, " +
+                "\"name\": \"dog\"}, \"ownerId\": 1}";
 
         given()
                 .contentType(ContentType.JSON)
@@ -270,7 +278,56 @@ public class PetAPITests {
     @DisplayName("TC007_INV - Add a pet with invalid pet type ID - expected status 400")
     public void testAddPetWithInvalidType_ShouldFail() {
         // Pet type with ID 999 does not exist in the system
-        String petJson = "{\"name\": \"Spyro\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 999, \"name\": \"dragon\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Spyro\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 999, " +
+                "\"name\": \"dragon\"}, \"ownerId\": 1}";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(petJson)
+                .when()
+                .post("/api/owners/1/pets")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("TC016 - Add a pet with malformed JSON payload - expected status 400")
+    public void testAddPetWithMalformedJson_ShouldReturn400() {
+        // Request body is syntactically invalid JSON and should be rejected by the API parser
+        String malformedPetJson = "{\"name\": \"BrokenJson\", \"birthDate\": \"2022-05-10\", \"type\": {\"id\": 2, \"name\": \"dog\"}";
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(malformedPetJson)
+                .when()
+                .post("/api/owners/1/pets")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("TC017 - Add a pet with unsupported Content-Type - expected status 415")
+    public void testAddPetWithUnsupportedContentType_ShouldReturn415() {
+        // API expects JSON payload; sending text/plain should return Unsupported Media Type
+        String petJson = "{\"name\": \"WrongMediaType\", \"birthDate\": \"2022-05-10\", \"type\": {\"id\": 2, \"name\": \"dog\"}}";
+
+        given()
+                .contentType("text/plain")
+                .body(petJson)
+                .when()
+                .post("/api/owners/1/pets")
+                .then()
+                .statusCode(415);
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("TC018 - Add a pet with invalid birth date format - expected status 400")
+    public void testAddPetWithInvalidBirthDateFormat_ShouldReturn400() {
+        // Date must follow ISO format (yyyy-MM-dd); invalid format should fail validation/binding
+        String petJson = "{\"name\": \"DateFormatPet\", \"birthDate\": \"15-01-2024\", \"type\": {\"id\": 2, \"name\": \"dog\"}}";
 
         given()
                 .contentType(ContentType.JSON)
