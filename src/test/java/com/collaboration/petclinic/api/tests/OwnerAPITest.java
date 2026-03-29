@@ -9,22 +9,70 @@ import static org.hamcrest.Matchers.*;
 
 class OwnerAPITest extends BaseTest {
 
-  // 🔹 Helper method to create owner and return ID
-  private int createOwner() {
+  private static final String OWNERS_PATH = "/owners";
+  private static final int NON_EXISTING_OWNER_ID = 999999;
+
+  private String ownerPath(int ownerId) {
+    return OWNERS_PATH + "/" + ownerId;
+  }
+
+  private String ownerPayload(String firstName, String lastName, String address, String city, String telephone) {
+    return """
+        {
+          "firstName": "%s",
+          "lastName": "%s",
+          "address": "%s",
+          "city": "%s",
+          "telephone": "%s"
+        }
+        """.formatted(firstName, lastName, address, city, telephone);
+  }
+
+  private String validOwnerPayload() {
+    return ownerPayload("Test", "User", "Street 1", "Skopje", "1234567890");
+  }
+
+  private io.restassured.response.ValidatableResponse getOwners() {
+    return RestAssured.given()
+            .when()
+            .get(OWNERS_PATH)
+            .then();
+  }
+
+  private io.restassured.response.ValidatableResponse getOwner(int ownerId) {
+    return RestAssured.given()
+            .when()
+            .get(ownerPath(ownerId))
+            .then();
+  }
+
+  private io.restassured.response.ValidatableResponse postOwner(String payload) {
     return RestAssured.given()
             .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "Test",
-              "lastName": "User",
-              "address": "Street 1",
-              "city": "Skopje",
-              "telephone": "1234567890"
-            }
-        """)
+            .body(payload)
             .when()
-            .post("/owners")
-            .then()
+            .post(OWNERS_PATH)
+            .then();
+  }
+
+  private io.restassured.response.ValidatableResponse putOwner(int ownerId, String payload) {
+    return RestAssured.given()
+            .contentType(ContentType.JSON)
+            .body(payload)
+            .when()
+            .put(ownerPath(ownerId))
+            .then();
+  }
+
+  private io.restassured.response.ValidatableResponse deleteOwner(int ownerId) {
+    return RestAssured.given()
+            .when()
+            .delete(ownerPath(ownerId))
+            .then();
+  }
+
+  private int createOwner() {
+    return postOwner(validOwnerPayload())
             .statusCode(201)
             .extract()
             .path("id");
@@ -36,20 +84,14 @@ class OwnerAPITest extends BaseTest {
   void shouldGetAllOwners() {
     createOwner(); // ensure at least one exists
 
-    RestAssured.given()
-            .when()
-            .get("/owners")
-            .then()
+    getOwners()
             .statusCode(200)
             .body("$", not(empty()));
   }
 
   @Test // TC02
   void shouldReturnOwnersList() {
-    RestAssured.given()
-            .when()
-            .get("/owners")
-            .then()
+    getOwners()
             .statusCode(200);
   }
 
@@ -59,20 +101,14 @@ class OwnerAPITest extends BaseTest {
   void shouldGetOwnerByValidId() {
     int ownerId = createOwner();
 
-    RestAssured.given()
-            .when()
-            .get("/owners/" + ownerId)
-            .then()
+    getOwner(ownerId)
             .statusCode(200)
             .body("id", equalTo(ownerId));
   }
 
   @Test // TC04
   void shouldReturn404ForInvalidOwnerId() {
-    RestAssured.given()
-            .when()
-            .get("/owners/999999")
-            .then()
+    getOwner(NON_EXISTING_OWNER_ID)
             .statusCode(404);
   }
 
@@ -80,84 +116,35 @@ class OwnerAPITest extends BaseTest {
 
   @Test // TC05
   void shouldCreateOwnerWithValidData() {
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "John",
-              "lastName": "Doe",
-              "address": "Street 1",
-              "city": "Skopje",
-              "telephone": "1234567890"
-            }
-        """)
-            .when()
-            .post("/owners")
-            .then()
+    postOwner(ownerPayload("John", "Doe", "Street 1", "Skopje", "1234567890"))
             .statusCode(201)
             .body("id", notNullValue());
   }
 
   @Test // TC06
   void shouldFailWhenMissingRequiredFields() {
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "John"
-            }
+    postOwner("""
+        {
+          "firstName": "John"
+        }
         """)
-            .when()
-            .post("/owners")
-            .then()
             .statusCode(400);
   }
 
   @Test // TC07
   void shouldFailWithInvalidData() {
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "",
-              "lastName": "",
-              "address": "",
-              "city": "",
-              "telephone": "abc"
-            }
-        """)
-            .when()
-            .post("/owners")
-            .then()
+    postOwner(ownerPayload("", "", "", "", "abc"))
             .statusCode(400);
   }
 
   @Test // TC08
   void shouldFailWhenCreatingDuplicateOwner() {
-    String body = """
-        {
-          "firstName": "Duplicate",
-          "lastName": "User",
-          "address": "Street 2",
-          "city": "Skopje",
-          "telephone": "9876543210"
-        }
-        """;
+    String body = ownerPayload("Duplicate", "User", "Street 2", "Skopje", "9876543210");
 
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body(body)
-            .when()
-            .post("/owners")
-            .then()
+    postOwner(body)
             .statusCode(201);
 
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body(body)
-            .when()
-            .post("/owners")
-            .then()
+    postOwner(body)
             .statusCode(anyOf(is(400), is(409)));
   }
 
@@ -167,39 +154,13 @@ class OwnerAPITest extends BaseTest {
   void shouldUpdateOwnerWithValidData() {
     int ownerId = createOwner();
 
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "Updated",
-              "lastName": "User",
-              "address": "New Address",
-              "city": "Bitola",
-              "telephone": "0111222333"
-            }
-        """)
-            .when()
-            .put("/owners/" + ownerId)
-            .then()
+    putOwner(ownerId, ownerPayload("Updated", "User", "New Address", "Bitola", "0111222333"))
             .statusCode(anyOf(is(200), is(204)));
   }
 
   @Test // TC10
   void shouldReturn404WhenUpdatingNonExistingOwner() {
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "Test",
-              "lastName": "User",
-              "address": "Address",
-              "city": "City",
-              "telephone": "1234567890"
-            }
-        """)
-            .when()
-            .put("/owners/999999")
-            .then()
+    putOwner(NON_EXISTING_OWNER_ID, ownerPayload("Test", "User", "Address", "City", "1234567890"))
             .statusCode(404);
   }
 
@@ -207,20 +168,7 @@ class OwnerAPITest extends BaseTest {
   void shouldFailUpdateWithInvalidData() {
     int ownerId = createOwner();
 
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("""
-            {
-              "firstName": "",
-              "lastName": "",
-              "address": "",
-              "city": "",
-              "telephone": "abc"
-            }
-        """)
-            .when()
-            .put("/owners/" + ownerId)
-            .then()
+    putOwner(ownerId, ownerPayload("", "", "", "", "abc"))
             .statusCode(400);
   }
 
@@ -228,12 +176,7 @@ class OwnerAPITest extends BaseTest {
   void shouldFailUpdateWithEmptyBody() {
     int ownerId = createOwner();
 
-    RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body("{}")
-            .when()
-            .put("/owners/" + ownerId)
-            .then()
+    putOwner(ownerId, "{}")
             .statusCode(400);
   }
 
@@ -243,19 +186,13 @@ class OwnerAPITest extends BaseTest {
   void shouldDeleteExistingOwner() {
     int ownerId = createOwner();
 
-    RestAssured.given()
-            .when()
-            .delete("/owners/" + ownerId)
-            .then()
+    deleteOwner(ownerId)
             .statusCode(anyOf(is(200), is(204)));
   }
 
   @Test // TC14
   void shouldReturn404WhenDeletingNonExistingOwner() {
-    RestAssured.given()
-            .when()
-            .delete("/owners/999999")
-            .then()
+    deleteOwner(NON_EXISTING_OWNER_ID)
             .statusCode(404);
   }
 }
