@@ -90,6 +90,19 @@
           <target>15</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.4</version>
+        <configuration>
+          <forkCount>1</forkCount>
+          <reuseForks>true</reuseForks>
+
+          <argLine>
+            -javaagent:C:\Users\radic\Downloads\joularjx-3.1.0.jar
+          </argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
