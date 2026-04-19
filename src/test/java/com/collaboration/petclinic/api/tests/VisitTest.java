@@ -14,32 +14,31 @@ import static org.hamcrest.Matchers.*;
 public class VisitTest extends BaseTest {
     @Test
     public void testGetVisits_Success() {
-        given()
-                    .spec(requestSpec)
-                .when()
-                    .get("/visits")
-                .then()
-                    .statusCode(200)
-                    .contentType("application/json")
-                    .body("size()", greaterThan(0))
-                    .body("[0]", hasKey("id"))
-                    .body("[0]", hasKey("date"))
-                    .body("[0]", hasKey("description"))
-                    .body("[0]", hasKey("petId"));
+        var response = given()
+                .spec(requestSpec)
+                .get("/visits");
+
+        response.then()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("size()", greaterThan(0))
+                .body("[0]", hasKey("id"))
+                .body("[0]", hasKey("date"))
+                .body("[0]", hasKey("description"))
+                .body("[0]", hasKey("petId"));
     }
-    
+
     @Test
     public void testGetVisits_VerifyResponseStructure() {
         given()
-                    .spec(requestSpec)
-                .when()
-                    .get("/visits")
+                .spec(requestSpec)
+                .get("/visits")
                 .then()
-                    .statusCode(200)
-                    .body("[0].id", notNullValue())
-                    .body("[0].id", greaterThan(0))
-                    .body("[0].date", matchesPattern("\\d{4}-\\d{2}-\\d{2}"))
-                    .body("[0].petId", greaterThan(0));
+                .statusCode(200)
+                .body("[0].id", notNullValue())
+                .body("[0].id", greaterThan(0))
+                .body("[0].date", matchesPattern("\\d{4}-\\d{2}-\\d{2}"))
+                .body("[0].petId", greaterThan(0));
     }
 
 
@@ -53,7 +52,7 @@ public class VisitTest extends BaseTest {
                 new Object [] {"2026-12-31", "New year visit", 1}
         };
     }
-    
+
     public Object[] addVisit_InvalidCases() {
         return new Object[]{
                 // date, description, petId, expectedStatus, description
@@ -96,7 +95,7 @@ public class VisitTest extends BaseTest {
                 new Object [] {"2026-06-07", "Description!!??123", 1, 204}
         };
     }
-    
+
     public Object[] editVisit_InvalidCases() {
         return new Object[]{
                 // date, description, visitId, expectedStatus, testCase
@@ -114,41 +113,38 @@ public class VisitTest extends BaseTest {
         Response response = VisitTestHelper.updateVisit(requestSpec, visitId, date, desc);
         response.then().statusCode(expectedStatus);
 
-        if (expectedStatus != 204) {
-            response.then().contentType("application/json");
+        if (expectedStatus == 204 || response.getBody().asString().isEmpty()) return;
 
-            if (response.getBody() != null && !response.getBody().asString().isEmpty()) {
-                int petId = response.jsonPath().getInt("petId");
-                VisitTestHelper.verifyVisitData(response, date, desc, petId);
-                VisitTestHelper.verifyVisitStructure(response);
-            }
-        }
+        int petId = response.jsonPath().getInt("petId");
+
+        VisitTestHelper.verifyVisitStructure(response);
+        VisitTestHelper.verifyVisitData(response, date, desc, petId);
     }
 
     // returns 500 instead of 400 for null date and description, but we will accept it as a valid response for now since it indicates a server error due to invalid input
     @Test
     @Parameters(method = "editVisit_InvalidCases")
     public void testEditVisit_InvalidInput(String date, String desc, int visitId, int expectedStatus) {
-        Response response = VisitTestHelper.updateVisit(requestSpec, visitId, date, desc);
-        response.then().statusCode(expectedStatus);
-        if (response.getBody() != null && !response.getBody().asString().isEmpty()) {
-            System.out.println("Response body for invalid edit: " + response.getBody().asString());
-        }
+        VisitTestHelper.updateVisit(requestSpec, visitId, date, desc)
+                .then()
+                .statusCode(expectedStatus);
     }
 
-    
+
 
 
     @Test
     public void testDeleteValidVisit() {
-        Response response = VisitTestHelper.deleteVisit(requestSpec, 1);
-        response.then().statusCode(204);
+        VisitTestHelper.deleteVisit(requestSpec, 1)
+                .then()
+                .statusCode(204);
     }
 
     @Test
     public void testDeleteInvalidVisit() {
-        Response response = VisitTestHelper.deleteVisit(requestSpec, 99999);
-        response.then().statusCode(404);
+        VisitTestHelper.deleteVisit(requestSpec, 99999)
+                .then()
+                .statusCode(404);
     }
 }
 

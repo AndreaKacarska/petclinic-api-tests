@@ -22,7 +22,6 @@
       <scope>test</scope>
     </dependency>
 
-
     <!-- Rest Assured -->
     <dependency>
       <groupId>io.rest-assured</groupId>
@@ -86,22 +85,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>15</source>
-          <target>15</target>
+          <source>17</source>
+          <target>17</target>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.4</version>
-        <configuration>
-          <forkCount>1</forkCount>
-          <reuseForks>true</reuseForks>
-
-          <argLine>
-            -javaagent:C:\Users\radic\Downloads\joularjx-3.1.0.jar
-          </argLine>
-        </configuration>
+        <version>3.2.5</version>
       </plugin>
     </plugins>
   </build>
