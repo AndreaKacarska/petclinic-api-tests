@@ -6,12 +6,19 @@ import org.junit.runner.RunWith;
 import junitparams.JUnitParamsRunner;
 
 import junitparams.Parameters;
+import org.junit.After;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @RunWith(JUnitParamsRunner.class)
 public class VisitTest extends BaseTest {
+
+    private List<Integer> createdVisits = new ArrayList<>();
+
     @Test
     public void testGetVisits_Success() {
         var response = given()
@@ -41,8 +48,6 @@ public class VisitTest extends BaseTest {
                 .body("[0].petId", greaterThan(0));
     }
 
-
-
     public Object[] addVisit_ValidCases() {
         return new Object[]{
                 // date, description, petId, expectedStatus
@@ -67,11 +72,11 @@ public class VisitTest extends BaseTest {
     @Test
     @Parameters(method = "addVisit_ValidCases")
     public void testAddVisit_Success(String date, String desc, int petId) {
-        int visitId = VisitTestHelper.createVisitAndAssert(requestSpec, date, desc, petId);
-
-        Response response = VisitTestHelper.getVisitById(requestSpec, visitId);
-        VisitTestHelper.verifyVisitData(response, date, desc, petId);
-        VisitTestHelper.verifyVisitStructure(response);
+        Response createResponse = VisitTestHelper.createVisitAndAssert(requestSpec, date, desc, petId);
+        int visitId = createResponse.jsonPath().getInt("id");
+        createdVisits.add(visitId);
+        VisitTestHelper.verifyVisitData(createResponse, date, desc, petId);
+        VisitTestHelper.verifyVisitStructure(createResponse);
     }
 
     // returns 500 instead of 400 for null date and description, but we will accept it as a valid response for now since it indicates a server error due to invalid input
@@ -81,11 +86,6 @@ public class VisitTest extends BaseTest {
         Response response = VisitTestHelper.createVisit(requestSpec, date, desc, petId);
         response.then().assertThat().statusCode(expectedStatus);
     }
-
-
-
-
-
 
     public Object[] editVisit_ValidCases() {
         return new Object[]{
@@ -130,9 +130,6 @@ public class VisitTest extends BaseTest {
                 .statusCode(expectedStatus);
     }
 
-
-
-
     @Test
     public void testDeleteValidVisit() {
         VisitTestHelper.deleteVisit(requestSpec, 1)
@@ -146,8 +143,12 @@ public class VisitTest extends BaseTest {
                 .then()
                 .statusCode(404);
     }
+
+    @After
+    public void tearDown() {
+        for (int id : createdVisits) {
+            VisitTestHelper.deleteVisit(requestSpec, id);
+        }
+        createdVisits.clear();
+    }
 }
-
-
-
-

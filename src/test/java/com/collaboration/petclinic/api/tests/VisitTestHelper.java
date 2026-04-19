@@ -53,10 +53,10 @@ public class VisitTestHelper {
                 .delete("/visits/" + visitId);
     }
 
-    public static int createVisitAndAssert(RequestSpecification requestSpec, String date, String description, int petId) {
+    public static Response createVisitAndAssert(RequestSpecification requestSpec, String date, String description, int petId) {
         Response response = createVisit(requestSpec, date, description, petId);
         response.then().statusCode(201);
-        return response.jsonPath().getInt("id");
+        return response;
     }
 
     public static void verifyVisitStructure(Response response) {
