@@ -1,0 +1,12 @@
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithBirthDateToday,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testDeletePet,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetSuccessfully,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testGetPetByValidId,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithSpecialCharacters,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithoutBirthDate_ShouldReturn400,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testUpdatePet,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithoutName_ShouldReturn400,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithSpacesOnlyName_ShouldReturn400,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.testAddDuplicatePetNameForSameOwner,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.slowDown,0.0000
+com.collaboration.petclinic.api.tests.PetAPITests.setup,0.0000

@@ -1,0 +1,10 @@
+java.io.FileInputStream.readBytes,0.0000
+java.lang.ref.Reference.waitForReferencePendingList,0.0000
+sun.nio.ch.Net.connect0,0.0000
+org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeBeforeTestExecutionCallbacks,0.0000
+java.net.URI$Parser.scan,0.0000
+org.apache.http.message.TokenParser.parseToken,0.0000
+java.util.stream.StreamSpliterators$AbstractWrappingSpliterator.getExactSizeIfKnown,0.0000
+java.util.concurrent.ConcurrentHashMap.putVal,0.0000
+java.util.HashMap.hash,0.0000
+org.apache.maven.surefire.api.util.internal.Channels$4.countBufferOverflows,0.0000

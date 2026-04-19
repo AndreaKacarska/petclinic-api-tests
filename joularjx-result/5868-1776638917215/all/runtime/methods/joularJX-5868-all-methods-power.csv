@@ -1,0 +1,8 @@
+java.io.FileInputStream.readBytes,0.0000
+java.lang.ref.Reference.waitForReferencePendingList,0.0000
+java.lang.invoke.VarHandleGuards.guard_LII_Z,0.0000
+java.util.concurrent.ConcurrentHashMap$CollectionView.<init>,0.0000
+jdk.internal.misc.Unsafe.allocateInstance,0.0000
+sun.nio.ch.SocketDispatcher.read0,0.0000
+jdk.internal.misc.Unsafe.compareAndSetInt,0.0000
+jdk.proxy2.$Proxy6.annotationType,0.0000

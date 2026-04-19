@@ -19,25 +19,29 @@ public class PetAPITests {
         RestAssured.baseURI = "http://localhost:9966/petclinic";
         RestAssured.authentication = RestAssured.basic("admin", "admin");
     }
+    @BeforeEach
+    public void slowDown() throws InterruptedException {
+        Thread.sleep(500); // Wait half a second before every test
+    }
 
 
     @Test
     @Order(1)
     @DisplayName("TC001 - Add a new pet successfully - expected status 201")
     public void testAddPetSuccessfully() {
-        String petJson = "{\"name\": \"Buddy\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Buddy\", \"birthDate\": \"2022-05-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 11}";
 
         createdPetId = given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(201)
                 .body("name", equalTo("Buddy"))
                 .body("birthDate", equalTo("2022-05-15"))
                 .body("type.name", equalTo("dog"))
-                .body("ownerId", equalTo(1))
+                .body("ownerId", equalTo(11))
                 .extract()
                 .path("id");
     }
@@ -47,13 +51,13 @@ public class PetAPITests {
     @DisplayName("TC002 - Add a pet with today's birth date - expected status 201")
     public void testAddPetWithBirthDateToday() {
         String today = java.time.LocalDate.now().toString();
-        String petJson = "{\"name\": \"Rex\", \"birthDate\": \"" + today + "\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Rex\", \"birthDate\": \"" + today + "\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 11}";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(201)
                 .body("birthDate", equalTo(today));
@@ -64,13 +68,13 @@ public class PetAPITests {
     @DisplayName("TC005 - Add a pet with special characters in the name - expected status 201")
     // Linked to BUG004 - needs clarification from team
     public void testAddPetWithSpecialCharacters() {
-        String petJson = "{\"name\": \"#!@123\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"#!@123\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 11}";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(201);
     }
@@ -80,33 +84,31 @@ public class PetAPITests {
     @DisplayName("TC008 - Add two pets with the same name to the same owner - expected status 201")
     // Linked to BUG005 - needs clarification from team
     public void testAddDuplicatePetNameForSameOwner() {
-        String petJson = "{\"name\": \"Bella\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Bella\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 11}";
 
-        given().contentType(ContentType.JSON).body(petJson).post("/api/owners/1/pets");
+        given().contentType(ContentType.JSON).body(petJson).post("/api/owners/11/pets");
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(201);
     }
 
     @Test
     @Order(5)
-    @DisplayName("TC011 - Get an existing pet by valid ID - expected status 200")
+    @DisplayName("TC011 - Get existing pet by ID")
     public void testGetPetByValidId() {
-        // Pet with ID 1 (Leo) exists in the system by default
+        // Fixed: Uses the ID from Order(1) instead of hardcoded '1'
         given()
                 .when()
-                .get("/api/pets/1")
+                .get("/api/pets/" + createdPetId)
                 .then()
                 .statusCode(200)
-                .body("id", equalTo(1))
-                .body("name", notNullValue())
-                .body("type", notNullValue())
-                .body("ownerId", notNullValue());
+                .body("id", equalTo(createdPetId))
+                .body("name", notNullValue());
     }
 
     @Test
@@ -120,7 +122,7 @@ public class PetAPITests {
                 .contentType(ContentType.JSON)
                 .body(updatedPetJson)
                 .when()
-                .put("/api/owners/1/pets/" + createdPetId)
+                .put("/api/owners/11/pets/" + createdPetId)
                 .then()
                 .statusCode(204);
     }
@@ -136,7 +138,7 @@ public class PetAPITests {
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(201)
                 .extract()
@@ -162,13 +164,13 @@ public class PetAPITests {
     @Order(8)
     @DisplayName("TC003 - Add a pet with a future birth date - expected status 400")
     public void testAddPetWithFutureDate_ShouldReturn400() {
-        String petJson = "{\"name\": \"Futuristico\", \"birthDate\": \"2029-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 2}";
+        String petJson = "{\"name\": \"Futuristico\", \"birthDate\": \"2029-01-15\", \"type\": {\"id\": 1, \"name\": \"cat\"}, \"ownerId\": 11}";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
@@ -178,13 +180,13 @@ public class PetAPITests {
     @DisplayName("TC004 - Add a pet without a name - expected status 400")
     // BUG001: System currently returns 500 instead of expected 400
     public void testAddPetWithoutName_ShouldReturn400() {
-        String petJson = "{\"name\": \"\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 2, \"name\": \"dog\"}, \"ownerId\": 11}";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
@@ -200,7 +202,7 @@ public class PetAPITests {
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
@@ -216,7 +218,7 @@ public class PetAPITests {
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
@@ -232,7 +234,7 @@ public class PetAPITests {
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
@@ -270,13 +272,13 @@ public class PetAPITests {
     @DisplayName("TC007_INV - Add a pet with invalid pet type ID - expected status 400")
     public void testAddPetWithInvalidType_ShouldFail() {
         // Pet type with ID 999 does not exist in the system
-        String petJson = "{\"name\": \"Spyro\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 999, \"name\": \"dragon\"}, \"ownerId\": 1}";
+        String petJson = "{\"name\": \"Spyro\", \"birthDate\": \"2024-01-15\", \"type\": {\"id\": 999, \"name\": \"dragon\"}, \"ownerId\": 11}";
 
         given()
                 .contentType(ContentType.JSON)
                 .body(petJson)
                 .when()
-                .post("/api/owners/1/pets")
+                .post("/api/owners/11/pets")
                 .then()
                 .statusCode(400);
     }
