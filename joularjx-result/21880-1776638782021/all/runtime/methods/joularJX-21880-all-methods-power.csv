@@ -1,7 +1,0 @@
-java.io.FileInputStream.readBytes,0.0000
-java.lang.ref.Reference.waitForReferencePendingList,0.0000
-java.util.stream.AbstractPipeline.lambda$spliterator$0,0.0000
-org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor$$Lambda/0x0000014027177998.<init>,0.0000
-jdk.internal.misc.Unsafe.allocateInstance,0.0000
-sun.nio.ch.SocketDispatcher.read0,0.0000
-org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod,0.0000

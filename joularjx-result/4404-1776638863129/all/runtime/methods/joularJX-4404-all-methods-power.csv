@@ -1,7 +1,0 @@
-java.lang.Thread.sleepNanos0,0.0000
-org.junit.platform.engine.support.store.NamespacedHierarchicalStore$CompositeKey.equals,0.0000
-org.junit.jupiter.engine.execution.NamespaceAwareStore.<init>,0.0000
-org.apache.http.conn.routing.HttpRoute.<init>,0.0000
-java.lang.ref.Reference.waitForReferencePendingList,0.0000
-jdk.internal.misc.Unsafe.park,0.0000
-java.io.FileInputStream.readBytes,0.0000

@@ -1,3 +1,0 @@
-com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithInvalidType_ShouldFail,0.0000
-com.collaboration.petclinic.api.tests.PetAPITests.testGetPetByNonExistentId_ShouldReturn404,0.0000
-com.collaboration.petclinic.api.tests.PetAPITests.testAddPetToNonExistentOwner_ShouldReturn404,0.0000

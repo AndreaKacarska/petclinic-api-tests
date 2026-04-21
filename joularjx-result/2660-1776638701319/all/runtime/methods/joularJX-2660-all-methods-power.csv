@@ -1,7 +1,0 @@
-java.io.FileInputStream.readBytes,0.0000
-java.lang.ref.Reference.waitForReferencePendingList,0.0000
-org.junit.jupiter.engine.extension.TimeoutConfiguration$$Lambda/0x0000027c26172480.<init>,0.0000
-java.lang.Object.clone,0.0000
-org.junit.platform.engine.support.hierarchical.NodeTestTask$DefaultDynamicTestExecutor.<init>,0.0000
-sun.nio.ch.SocketDispatcher.read0,0.0000
-java.lang.invoke.MethodHandleNatives.resolve,0.0000

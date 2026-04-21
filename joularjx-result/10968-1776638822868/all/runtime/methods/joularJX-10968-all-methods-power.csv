@@ -1,6 +1,0 @@
-java.io.FileInputStream.readBytes,0.0000
-java.lang.ref.Reference.waitForReferencePendingList,0.0000
-org.junit.jupiter.engine.extension.TimeoutExtension$$Lambda/0x000002b2d110c4a8.<init>,0.0000
-java.util.stream.ReferencePipeline$2$1.accept,0.0000
-sun.nio.ch.SocketDispatcher.read0,0.0000
-org.junit.platform.engine.support.store.NamespacedHierarchicalStore$CompositeKey.<init>,0.0000
