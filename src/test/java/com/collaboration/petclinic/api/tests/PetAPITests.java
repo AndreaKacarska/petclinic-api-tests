@@ -19,10 +19,7 @@ public class PetAPITests {
         RestAssured.baseURI = "http://localhost:9966/petclinic";
         RestAssured.authentication = RestAssured.basic("admin", "admin");
     }
-    @BeforeEach
-    public void slowDown() throws InterruptedException {
-        Thread.sleep(500); // Wait half a second before every test
-    }
+
 
 
     @Test
