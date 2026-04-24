@@ -3,14 +3,25 @@ package com.collaboration.petclinic.api.tests;
 import com.collaboration.petclinic.api.base.BaseTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import static org.hamcrest.Matchers.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OwnerAPITest extends BaseTest {
 
   private static final String OWNERS_PATH = "/owners";
   private static final int NON_EXISTING_OWNER_ID = 999999;
+
+  // Shared owner ID created once before all tests
+  private int sharedOwnerId;
+
+  @BeforeAll
+  void setup() {
+    sharedOwnerId = createOwner();
+  }
 
   private String ownerPath(int ownerId) {
     return OWNERS_PATH + "/" + ownerId;
@@ -82,28 +93,20 @@ class OwnerAPITest extends BaseTest {
 
   @Test // TC01
   void shouldGetAllOwners() {
-    createOwner(); // ensure at least one exists
-
+    // Uses sharedOwnerId created in @BeforeAll — no extra API call needed
     getOwners()
             .statusCode(200)
             .body("$", not(empty()));
   }
-
-  @Test // TC02
-  void shouldReturnOwnersList() {
-    getOwners()
-            .statusCode(200);
-  }
-
+  // TC02 removed — was identical to TC01 with no additional value
   // ---------------- GET /owners/{id} ----------------
 
   @Test // TC03
   void shouldGetOwnerByValidId() {
-    int ownerId = createOwner();
-
-    getOwner(ownerId)
+    // Reuses sharedOwnerId instead of creating a new owner
+    getOwner(sharedOwnerId)
             .statusCode(200)
-            .body("id", equalTo(ownerId));
+            .body("id", equalTo(sharedOwnerId));
   }
 
   @Test // TC04
@@ -152,9 +155,7 @@ class OwnerAPITest extends BaseTest {
 
   @Test // TC09
   void shouldUpdateOwnerWithValidData() {
-    int ownerId = createOwner();
-
-    putOwner(ownerId, ownerPayload("Updated", "User", "New Address", "Bitola", "0111222333"))
+    putOwner(sharedOwnerId, ownerPayload("Updated", "User", "New Address", "Bitola", "0111222333"))
             .statusCode(anyOf(is(200), is(204)));
   }
 
@@ -166,17 +167,13 @@ class OwnerAPITest extends BaseTest {
 
   @Test // TC11
   void shouldFailUpdateWithInvalidData() {
-    int ownerId = createOwner();
-
-    putOwner(ownerId, ownerPayload("", "", "", "", "abc"))
+    putOwner(sharedOwnerId, ownerPayload("", "", "", "", "abc"))
             .statusCode(400);
   }
 
   @Test // TC12
   void shouldFailUpdateWithEmptyBody() {
-    int ownerId = createOwner();
-
-    putOwner(ownerId, "{}")
+    putOwner(sharedOwnerId, "{}")
             .statusCode(400);
   }
 
@@ -184,9 +181,8 @@ class OwnerAPITest extends BaseTest {
 
   @Test // TC13
   void shouldDeleteExistingOwner() {
-    int ownerId = createOwner();
-
-    deleteOwner(ownerId)
+    int ownerToDelete = createOwner();
+    deleteOwner(ownerToDelete)
             .statusCode(anyOf(is(200), is(204)));
   }
 
