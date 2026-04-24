@@ -1,6 +1,0 @@
-com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenRequiredFieldIsMissing,0.0000
-com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenBodyIsMissing,0.0000
-com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.postOwner,0.0000
-com.collaboration.petclinic.api.base.BaseTest.setup,0.0000
-com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldAcceptNamesWithLettersOnly,0.0000
-com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenRequiredFieldIsBlankOrWhitespace,0.0000
