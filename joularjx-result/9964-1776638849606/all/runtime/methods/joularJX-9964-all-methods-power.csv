@@ -1,6 +1,0 @@
-java.io.FileInputStream.readBytes,0.0000
-java.lang.ref.Reference.waitForReferencePendingList,0.0000
-java.lang.Thread.sleepNanos0,0.0000
-sun.nio.ch.SocketDispatcher.read0,0.0000
-org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor$$Lambda/0x0000026b0a0bb808.invokeBeforeEachMethod,0.0000
-java.lang.invoke.DirectMethodHandle$Holder.newInvokeSpecial,0.0000

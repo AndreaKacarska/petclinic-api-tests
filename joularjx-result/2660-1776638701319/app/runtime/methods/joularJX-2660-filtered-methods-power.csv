@@ -1,2 +1,0 @@
-com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithoutType_ShouldReturn400,0.0000
-com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithoutBirthDate_ShouldReturn400,0.0000
