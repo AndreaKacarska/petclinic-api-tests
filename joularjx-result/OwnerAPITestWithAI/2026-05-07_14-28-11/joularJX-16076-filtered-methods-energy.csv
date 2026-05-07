@@ -1,0 +1,7 @@
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenFirstNameIsNotLettersOnly,0.0856
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenRequiredFieldIsMissing,0.1712
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenBodyIsMissing,0.0856
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.postOwner,8.9229
+com.collaboration.petclinic.api.base.BaseTest.setup,1.6081
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldAcceptNamesWithLettersOnly,2.9967
+com.collaboration.petclinic.api.tests.OwnerAPITestWithAI.shouldRejectWhenRequiredFieldIsBlankOrWhitespace,0.0856
