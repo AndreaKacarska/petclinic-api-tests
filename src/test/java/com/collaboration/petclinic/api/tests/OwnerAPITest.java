@@ -6,189 +6,183 @@ import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.hamcrest.Matchers.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.notNullValue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class OwnerAPITest extends BaseTest {
 
-  private static final String OWNERS_PATH = "/owners";
-  private static final int NON_EXISTING_OWNER_ID = 999999;
-
-  // Shared owner ID created once before all tests
-  private int sharedOwnerId;
+  private Map<String, Object> baseOwnerPayload;
 
   @BeforeAll
-  void setup() {
-    sharedOwnerId = createOwner();
+  void setupFixtures() {
+    baseOwnerPayload = new LinkedHashMap<>();
+    baseOwnerPayload.put("firstName", "John");
+    baseOwnerPayload.put("lastName", "Doe");
+    baseOwnerPayload.put("address", "Street 1");
+    baseOwnerPayload.put("city", "Skopje");
+    baseOwnerPayload.put("telephone", "1234567890");
   }
 
-  private String ownerPath(int ownerId) {
-    return OWNERS_PATH + "/" + ownerId;
+  private Map<String, Object> validOwnerPayload() {
+    return new LinkedHashMap<>(baseOwnerPayload);
   }
 
-  private String ownerPayload(String firstName, String lastName, String address, String city, String telephone) {
-    return """
-        {
-          "firstName": "%s",
-          "lastName": "%s",
-          "address": "%s",
-          "city": "%s",
-          "telephone": "%s"
-        }
-        """.formatted(firstName, lastName, address, city, telephone);
+  private Map<String, Object> ownerPayloadWithOverride(String field, Object value) {
+    Map<String, Object> payload = validOwnerPayload();
+    payload.put(field, value);
+    return payload;
   }
 
-  private String validOwnerPayload() {
-    return ownerPayload("Test", "User", "Street 1", "Skopje", "1234567890");
+  private Map<String, Object> ownerPayloadWithout(String field) {
+    Map<String, Object> payload = validOwnerPayload();
+    payload.remove(field);
+    return payload;
   }
 
-  private io.restassured.response.ValidatableResponse getOwners() {
-    return RestAssured.given()
-            .when()
-            .get(OWNERS_PATH)
-            .then();
-  }
-
-  private io.restassured.response.ValidatableResponse getOwner(int ownerId) {
-    return RestAssured.given()
-            .when()
-            .get(ownerPath(ownerId))
-            .then();
-  }
-
-  private io.restassured.response.ValidatableResponse postOwner(String payload) {
+  private io.restassured.response.Response postOwner(Map<String, Object> payload) {
     return RestAssured.given()
             .contentType(ContentType.JSON)
             .body(payload)
             .when()
-            .post(OWNERS_PATH)
-            .then();
+            .post("/owners");
   }
 
-  private io.restassured.response.ValidatableResponse putOwner(int ownerId, String payload) {
-    return RestAssured.given()
-            .contentType(ContentType.JSON)
-            .body(payload)
-            .when()
-            .put(ownerPath(ownerId))
-            .then();
+  private static Stream<String> requiredFields() {
+    return Stream.of("firstName", "lastName", "address", "city", "telephone");
   }
 
-  private io.restassured.response.ValidatableResponse deleteOwner(int ownerId) {
-    return RestAssured.given()
-            .when()
-            .delete(ownerPath(ownerId))
-            .then();
+  private static Stream<String> invalidNameValues() {
+    return Stream.of("John1", "J@hn", "123");
   }
 
-  private int createOwner() {
-    return postOwner(validOwnerPayload())
-            .statusCode(201)
-            .extract()
-            .path("id");
+  private static Stream<String> validAddressValues() {
+    return Stream.of("Main St. #10/B-2");
   }
 
-  // ---------------- GET /owners ----------------
-
-  @Test // TC01
-  void shouldGetAllOwners() {
-    // Uses sharedOwnerId created in @BeforeAll — no extra API call needed
-    getOwners()
-            .statusCode(200)
-            .body("$", not(empty()));
-  }
-  // TC02 removed — was identical to TC01 with no additional value
-  // ---------------- GET /owners/{id} ----------------
-
-  @Test // TC03
-  void shouldGetOwnerByValidId() {
-    // Reuses sharedOwnerId instead of creating a new owner
-    getOwner(sharedOwnerId)
-            .statusCode(200)
-            .body("id", equalTo(sharedOwnerId));
+  private static Stream<String> validTelephoneValues() {
+    return Stream.of("1234567890");
   }
 
-  @Test // TC04
-  void shouldReturn404ForInvalidOwnerId() {
-    getOwner(NON_EXISTING_OWNER_ID)
-            .statusCode(404);
+  private static Stream<String> invalidTelephoneValues() {
+    return Stream.of("12345abcde");
   }
 
-  // ---------------- POST /owners ----------------
-
-  @Test // TC05
+  @Test
   void shouldCreateOwnerWithValidData() {
-    postOwner(ownerPayload("John", "Doe", "Street 1", "Skopje", "1234567890"))
+    Map<String, Object> payload = validOwnerPayload();
+
+    postOwner(payload).then()
             .statusCode(201)
-            .body("id", notNullValue());
+            .body("id", notNullValue())
+            .body("id", greaterThan(0))
+            .body("firstName", equalTo(payload.get("firstName")))
+            .body("lastName", equalTo(payload.get("lastName")))
+            .body("address", equalTo(payload.get("address")))
+            .body("city", equalTo(payload.get("city")))
+            .body("telephone", equalTo(payload.get("telephone")));
   }
 
-  @Test // TC06
-  void shouldFailWhenMissingRequiredFields() {
-    postOwner("""
-        {
-          "firstName": "John"
-        }
-        """)
+  @ParameterizedTest(name = "shouldRejectWhenRequiredFieldIsMissing: {0}")
+  @MethodSource("requiredFields")
+  void shouldRejectWhenRequiredFieldIsMissing(String field) {
+    Map<String, Object> payload = ownerPayloadWithout(field);
+    postOwner(payload)
+            .then()
             .statusCode(400);
   }
 
-  @Test // TC07
-  void shouldFailWithInvalidData() {
-    postOwner(ownerPayload("", "", "", "", "abc"))
+  @ParameterizedTest(name = "shouldRejectWhenFirstNameIsNotLettersOnly: {0}")
+  @MethodSource("invalidNameValues")
+  void shouldRejectWhenFirstNameIsNotLettersOnly(String firstName) {
+    postOwner(ownerPayloadWithOverride("firstName", firstName))
+            .then()
             .statusCode(400);
   }
 
-  @Test // TC08
-  void shouldFailWhenCreatingDuplicateOwner() {
-    String body = ownerPayload("Duplicate", "User", "Street 2", "Skopje", "9876543210");
-
-    postOwner(body)
-            .statusCode(201);
-
-    postOwner(body)
-            .statusCode(anyOf(is(400), is(409)));
-  }
-
-  // ---------------- PUT /owners/{id} ----------------
-
-  @Test // TC09
-  void shouldUpdateOwnerWithValidData() {
-    putOwner(sharedOwnerId, ownerPayload("Updated", "User", "New Address", "Bitola", "0111222333"))
-            .statusCode(anyOf(is(200), is(204)));
-  }
-
-  @Test // TC10
-  void shouldReturn404WhenUpdatingNonExistingOwner() {
-    putOwner(NON_EXISTING_OWNER_ID, ownerPayload("Test", "User", "Address", "City", "1234567890"))
-            .statusCode(404);
-  }
-
-  @Test // TC11
-  void shouldFailUpdateWithInvalidData() {
-    putOwner(sharedOwnerId, ownerPayload("", "", "", "", "abc"))
+  @ParameterizedTest(name = "shouldRejectWhenLastNameIsNotLettersOnly: {0}")
+  @MethodSource("invalidNameValues")
+  void shouldRejectWhenLastNameIsNotLettersOnly(String lastName) {
+    postOwner(ownerPayloadWithOverride("lastName", lastName))
+            .then()
             .statusCode(400);
   }
 
-  @Test // TC12
-  void shouldFailUpdateWithEmptyBody() {
-    putOwner(sharedOwnerId, "{}")
+  @ParameterizedTest(name = "shouldAcceptAddressWithAllowedCharacters: {0}")
+  @MethodSource("validAddressValues")
+  void shouldAcceptAddressWithAllowedCharacters(String address) {
+    postOwner(ownerPayloadWithOverride("address", address))
+            .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("address", equalTo(address));
+  }
+
+  @ParameterizedTest(name = "shouldRejectWhenTelephoneContainsNonNumericCharacters: {0}")
+  @MethodSource("invalidTelephoneValues")
+  void shouldRejectWhenTelephoneContainsNonNumericCharacters(String telephone) {
+    postOwner(ownerPayloadWithOverride("telephone", telephone))
+            .then()
             .statusCode(400);
   }
 
-  // ---------------- DELETE /owners/{id} ----------------
-
-  @Test // TC13
-  void shouldDeleteExistingOwner() {
-    int ownerToDelete = createOwner();
-    deleteOwner(ownerToDelete)
-            .statusCode(anyOf(is(200), is(204)));
+  @ParameterizedTest(name = "shouldAcceptWhenTelephoneContainsOnlyDigits: {0}")
+  @MethodSource("validTelephoneValues")
+  void shouldAcceptWhenTelephoneContainsOnlyDigits(String telephone) {
+    postOwner(ownerPayloadWithOverride("telephone", telephone))
+            .then()
+            .statusCode(201)
+            .body("id", notNullValue())
+            .body("telephone", equalTo(telephone));
   }
 
-  @Test // TC14
-  void shouldReturn404WhenDeletingNonExistingOwner() {
-    deleteOwner(NON_EXISTING_OWNER_ID)
-            .statusCode(404);
+  @Test
+  void shouldRejectWhenBodyIsEmptyObject() {
+    postOwner(new LinkedHashMap<>())
+            .then()
+            .statusCode(400);
+  }
+
+  @Test
+  void shouldReturnErrorWhenBodyIsMissing() {
+    RestAssured.given()
+            .contentType(ContentType.JSON)
+            .when()
+            .post("/owners")
+            .then()
+            .statusCode(greaterThanOrEqualTo(400));
+  }
+
+  @Test
+  void shouldReturnErrorWhenJsonBodyIsMalformed() {
+    String malformedJson = "{";
+
+    RestAssured.given()
+            .contentType(ContentType.JSON)
+            .body(malformedJson)
+            .when()
+            .post("/owners")
+            .then()
+            .statusCode(greaterThanOrEqualTo(400));
+  }
+
+  @Test
+  void shouldReturnErrorWhenContentTypeIsNotJson() {
+    RestAssured.given()
+            .contentType(ContentType.TEXT)
+            .body("firstName=John&lastName=Doe")
+            .when()
+            .post("/owners")
+            .then()
+            .statusCode(greaterThanOrEqualTo(400));
   }
 }

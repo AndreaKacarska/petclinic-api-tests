@@ -1,4 +1,4 @@
-package com.collaboration.petclinic.api.tests.Veterinarian_API_Tests;
+package com.collaboration.petclinic.api.tests;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
