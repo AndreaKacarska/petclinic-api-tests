@@ -1,0 +1,4 @@
+com.collaboration.petclinic.api.tests.PetAPITests.withBody,0.2885
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetSuccessfully,2.6683
+com.collaboration.petclinic.api.tests.PetAPITests.ownerPetsPath,0.0721
+com.collaboration.petclinic.api.tests.PetAPITests.setup,2.1635

@@ -1,0 +1,5 @@
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithBirthDateToday,0.0839
+com.collaboration.petclinic.api.tests.PetAPITests.withBody,0.6307
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetSuccessfully,5.6124
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithSpecialCharacters,0.0420
+com.collaboration.petclinic.api.tests.PetAPITests.setup,3.7286

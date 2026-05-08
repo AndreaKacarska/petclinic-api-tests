@@ -1,0 +1,7 @@
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithBirthDateToday,0.1825
+com.collaboration.petclinic.api.tests.PetAPITests.withBody,0.6130
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetSuccessfully,6.3655
+com.collaboration.petclinic.api.tests.PetAPITests.testGetPetByValidId,0.1825
+com.collaboration.petclinic.api.tests.PetAPITests.testAddPetWithSpecialCharacters,0.1217
+com.collaboration.petclinic.api.tests.PetAPITests.setup,3.2947
+com.collaboration.petclinic.api.tests.PetAPITests.testAddDuplicatePetNameForSameOwner,0.1825
