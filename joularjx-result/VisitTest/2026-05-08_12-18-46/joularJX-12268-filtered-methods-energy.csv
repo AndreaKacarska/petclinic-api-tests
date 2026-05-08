@@ -1,0 +1,9 @@
+com.collaboration.petclinic.api.tests.VisitTestHelper.createVisitAndAssert,0.0761
+com.collaboration.petclinic.api.base.BaseTest.init,3.0680
+com.collaboration.petclinic.api.tests.VisitTest.testAddVisit_Success,3.7285
+com.collaboration.petclinic.api.tests.VisitTest.testEditVisit_InvalidInput,0.2283
+com.collaboration.petclinic.api.tests.VisitTestHelper.req,0.6413
+com.collaboration.petclinic.api.tests.VisitTestHelper.createVisit,0.1522
+com.collaboration.petclinic.api.tests.VisitTestHelper.updateVisit,4.2780
+com.collaboration.petclinic.api.tests.VisitTestHelper.deleteVisit,0.0761
+com.collaboration.petclinic.api.tests.VisitTestHelper.verifyVisitData,0.3805

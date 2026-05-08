@@ -1,0 +1,6 @@
+com.collaboration.petclinic.api.base.BaseTest.init,1.8475
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldReturnErrorWhenJsonBodyIsMalformed,0.1412
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldReturnErrorWhenContentTypeIsNotJson,0.1412
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldAcceptAddressWithAllowedCharacters,1.1999
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldRejectWhenRequiredFieldIsMissing,0.1412
+com.collaboration.petclinic.api.tests.OwnerAPITest.postOwner,5.9271

@@ -1,0 +1,11 @@
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.createVeterinarianSpecialChars,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.getNonExistingVet,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.createVeterinarian,7.4462
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.setup,4.1149
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.deleteAlreadyDeletedVet,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.createVeterinarianEmptyFields,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.createVeterinarianInvalidFirstName,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.createDuplicateVeterinarian,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.getVeterinarian,0.5528
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.updateVeterinarian,0.0614
+com.collaboration.petclinic.api.tests.VeterinarianApiTest.deleteVeterinarian,0.1228
