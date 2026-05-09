@@ -1,0 +1,10 @@
+com.collaboration.petclinic.api.tests.OwnerAPITest.createOwner,2.9282
+com.collaboration.petclinic.api.tests.OwnerAPITest.ownerPath,0.0598
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldUpdateOwnerWithValidData,0.0598
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldGetOwnerByValidId,0.1793
+com.collaboration.petclinic.api.tests.OwnerAPITest.getOwner,0.1195
+com.collaboration.petclinic.api.tests.OwnerAPITest.putOwner,0.4183
+com.collaboration.petclinic.api.base.BaseTest.setup,0.9909
+com.collaboration.petclinic.api.tests.OwnerAPITest.postOwner,4.5047
+com.collaboration.petclinic.api.tests.OwnerAPITest.shouldFailWhenCreatingDuplicateOwner,0.0598
+com.collaboration.petclinic.api.tests.OwnerAPITest.deleteOwner,0.1195
